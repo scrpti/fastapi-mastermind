@@ -1,7 +1,11 @@
 from fastapi import FastAPI, Path, Query
 from cardata import CarData
 
-app = FastAPI()
+app = FastAPI(
+    title="API de Gestión de Coches",
+    description="API desarrollada con FastAPI para consultar coches, obtener coches por id y filtrar por marca.",
+    version="1.0.0"
+)
 car = CarData()
 
 @app.get("/coches/")
