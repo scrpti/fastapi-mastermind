@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Path, Query
+from fastapi import FastAPI, Response, status
 from futboldata import FutbolData
 from models import Partido
 
@@ -32,9 +32,19 @@ async def createPartido(partido: Partido):
     return await futdata.write_partido(partido)
 
 @app.put("/partidos/{partido_id}")
-async def updatePartido(partido_id:int, partido:Partido):
-    return await futdata.update_partido(partido_id,partido)
+async def updatePartido(partido_id:int, partido:Partido, response:Response):
+    partido_existe = await futdata.get_partido(partido_id)
+    if partido_existe:
+        return await futdata.update_partido(partido_id,partido)
+    else:
+        response.status_code=status.HTTP_404_NOT_FOUND
+        return {"Partido con ID " + str(partido_id) + " no encontrado"}
 
 @app.delete("/partidos/{partido_id}")
-async def deletePartido(partido_id:int):
-    return await futdata.delete_partido(partido_id)
+async def deletePartido(partido_id:int, response:Response):
+    partido_existe = await futdata.get_partido(partido_id)
+    if partido_existe:
+        return await futdata.delete_partido(partido_id)
+    else:
+        response.status_code=status.HTTP_404_NOT_FOUND
+        return {"Partido con ID " + str(partido_id) + " no encontrado"}
