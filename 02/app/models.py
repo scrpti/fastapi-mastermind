@@ -1,10 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class Partido(BaseModel):
-    anyo: int
+    anyo: int = Field(ge= 0, le= 2026)
     fase: str
     equipolocal: str
-    goleslocales: int
-    golesvisitante: int
+    goleslocales: int = Field(ge= 0)
+    golesvisitante: int = Field(ge= 0)
     equipovisitante: str
     estaequipoanfitrion: bool
