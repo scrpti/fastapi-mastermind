@@ -1,22 +1,22 @@
-from fastapi import FastAPI, Response, status
+from fastapi import FastAPI, Response, status, Path, Query, Body
 from futboldata import FutbolData
 from models import Partido
+from typing import Annotated
 
 
 app = FastAPI()
 futdata = FutbolData()
 
 @app.get("/partidos")
-async def getPartidos(skip: int=0, total: int=10):
+async def getPartidos(skip: Annotated[int, Query(description="Skip debe ser mayor o igual que 0", ge=0)], total: Annotated[int, Query(ge=0)]):
     return await futdata.get_partidos(skip, total)
-
 
 @app.get("/todospartidos")
 async def getPartidos():
     return await futdata.get_allIPartidos()
 
 @app.get("/partidos/{partido_id}")
-async def getPartidoByID(partido_id: int):
+async def getPartidoByID(partido_id: Annotated[int, Path(description="El ID del partido debe ser mayor o igual que 0", ge=0)]):
     return await futdata.get_partido(partido_id)
 
 @app.get("/partidosequipo/{partido_name}")
@@ -28,7 +28,7 @@ async def getPartidoByEquipoByQuery(equipo: str):
     return await futdata.get_partidosEquipo(equipo)
 
 @app.post("/partidos")
-async def createPartido(partido: Partido):
+async def createPartido(partido: Annotated[Partido, Body(description="Datos del partido")]):
     return await futdata.write_partido(partido)
 
 @app.put("/partidos/{partido_id}")
